@@ -10,7 +10,8 @@ class PlayersController < ApplicationController
 
   # GET /players/1
   def show
-    render json: @player
+    # return x, y, z
+    render json: { x: @player.x, y: @player.y, z: @player.z }
   end
 
   # POST /players
@@ -25,7 +26,6 @@ class PlayersController < ApplicationController
   end
 
   def save_location
-    # @player = find or create
     @player = Player.find_or_create_by(id: params[:id])
     @player.update(player_params.except(:id))
     render json: @player
@@ -54,7 +54,6 @@ class PlayersController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def player_params
-    # Need to control for this input: "{\"player\":{\"x\":10,\"y\":15.5,\"z\":15.5}}"
     data = JSON.parse(params['data'])
     params = ActionController::Parameters.new(data)
     params.require(:player).permit(:x, :y, :z)
