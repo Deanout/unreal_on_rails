@@ -24,6 +24,13 @@ class PlayersController < ApplicationController
     end
   end
 
+  def save_location
+    # @player = find or create
+    @player = Player.find_or_create_by(id: params[:id])
+    @player.update(player_params.except(:id))
+    render json: @player
+  end
+
   # PATCH/PUT /players/1
   def update
     if @player.update(player_params)
