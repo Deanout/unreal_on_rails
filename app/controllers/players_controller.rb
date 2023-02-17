@@ -1,5 +1,5 @@
 class PlayersController < ApplicationController
-  before_action :set_player, only: %i[ show update destroy ]
+  before_action :set_player, only: %i[show update destroy]
 
   # GET /players
   def index
@@ -10,7 +10,8 @@ class PlayersController < ApplicationController
 
   # GET /players/1
   def show
-    render json: @player
+    # return x, y, z
+    render json: { x: @player.x, y: @player.y, z: @player.z }
   end
 
   # POST /players
@@ -22,6 +23,12 @@ class PlayersController < ApplicationController
     else
       render json: @player.errors, status: :unprocessable_entity
     end
+  end
+
+  def save_location
+    @player = Player.find_or_create_by(id: params[:id])
+    @player.update(player_params.except(:id))
+    render json: @player
   end
 
   # PATCH/PUT /players/1
@@ -39,13 +46,16 @@ class PlayersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_player
-      @player = Player.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def player_params
-      params.require(:player).permit(:x, :y, :z)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_player
+    @player = Player.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def player_params
+    data = JSON.parse(params['data'])
+    params = ActionController::Parameters.new(data)
+    params.require(:player).permit(:x, :y, :z)
+  end
 end
