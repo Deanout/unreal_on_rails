@@ -54,6 +54,10 @@ class PlayersController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def player_params
+    # Need to control for this input: "{\"player\":{\"x\":10,\"y\":15.5,\"z\":15.5}}"
+    json_str = params['_json']
+    json_obj = JSON.parse(json_str)
+    params = ActionController::Parameters.new(json_obj)
     params.require(:player).permit(:x, :y, :z)
   end
 end
